@@ -1,0 +1,52 @@
+smart-delivery-system/
+├── order-service/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/
+│   │   │   │   ├── com/
+│   │   │   │       ├── example/
+│   │   │   │           ├── orderservice/
+│   │   │   │               ├── config/
+│   │   │   │               │   ├── AsyncConfig.java
+│   │   │   │               │   └── KafkaProducerConfig.java
+│   │   │   │               ├── controller/
+│   │   │   │               │   └── OrderController.java
+│   │   │   │               ├── dto/
+│   │   │   │               │   ├── OrderEvent.java
+│   │   │   │               │   ├── OrderItemRequest.java
+│   │   │   │               │   ├── OrderItemResponse.java
+│   │   │   │               │   ├── OrderRequest.java
+│   │   │   │               │   └── OrderResponse.java
+│   │   │   │               ├── exception/
+│   │   │   │               │   ├── GlobalExceptionHandler.java
+│   │   │   │               │   └── OrderNotFoundException.java
+│   │   │   │               ├── model/
+│   │   │   │               │   ├── Order.java
+│   │   │   │               │   ├── OrderItem.java
+│   │   │   │               │   └── OrderStatus.java
+│   │   │   │               ├── repository/
+│   │   │   │               │   └── OrderRepository.java
+│   │   │   │               ├── service/
+│   │   │   │               │   └── OrderService.java
+│   │   │   │               └── OrderServiceApplication.java
+│   │   │   ├── resources/
+│   │   │       ├── static/
+│   │   │       ├── templates/
+│   │   │       ├── application-docker.yml
+│   │   │       ├── application.properties
+│   │   │       └── application.yml
+│   │   ├── test/
+│   │       ├── java/
+│   │           ├── com/
+│   │               ├── example/
+│   │                   ├── orderservice/
+│   │                       └── OrderServiceApplicationTests.java
+│   ├── Dockerfile
+│   ├── HELP.md
+│   ├── mvnw
+│   ├── mvnw.cmd
+│   ├── order-service.iml
+│   └── pom.xml
+├── README.md
+├── pom.xml
+└── smart-delivery-system.iml
