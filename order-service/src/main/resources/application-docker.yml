@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+  datasource:
+    url: jdbc:postgresql://postgres:5432/delivery_db
+
+  kafka:
+    bootstrap-servers: kafka:29092
+
+server:
+  port: 8081
