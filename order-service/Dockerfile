@@ -1,17 +1,34 @@
-FROM eclipse-temurin:17-jdk-alpine AS build
-WORKDIR /workspace/app
+# Multi-stage build for Order Service
 
-COPY pom.xml .
-COPY src src
+# Stage 1: Build stage (already built by CI/CD, so we just copy)
+FROM eclipse-temurin:17-jre-alpine AS runtime
 
-RUN apk add --no-cache maven
-RUN mvn clean package -DskipTests
+# Add a non-root user
+RUN addgroup -S spring && adduser -S spring -G spring
 
-FROM eclipse-temurin:17-jre-alpine
+# Set working directory
 WORKDIR /app
 
-COPY --from=build /workspace/app/target/*.jar app.jar
+# Copy the JAR file
+COPY target/*.jar app.jar
 
-EXPOSE 8081
+# Change ownership
+RUN chown spring:spring app.jar
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Switch to non-root user
+USER spring:spring
+
+# Expose port
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1
+
+# Run the application
+ENTRYPOINT ["java", \
+    "-XX:+UseContainerSupport", \
+    "-XX:MaxRAMPercentage=75.0", \
+    "-Djava.security.egd=file:/dev/./urandom", \
+    "-jar", \
+    "app.jar"]

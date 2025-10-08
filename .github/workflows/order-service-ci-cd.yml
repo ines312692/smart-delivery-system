@@ -6,12 +6,14 @@ on:
     paths:
       - 'order-service/**'
       - 'common/**'
+      - 'pom.xml'
       - '.github/workflows/order-service-ci-cd.yml'
   pull_request:
     branches: [ main, develop ]
     paths:
       - 'order-service/**'
       - 'common/**'
+      - 'pom.xml'
 
 env:
   SERVICE_NAME: order-service
@@ -41,11 +43,10 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Build common module
-        run: mvn clean install -pl common -am -DskipTests
-
-      - name: Run tests
-        run: mvn test -pl order-service
+      - name: Build project and run tests
+        run: |
+          mvn clean install -DskipTests
+          mvn test -pl order-service
 
       - name: Generate test coverage report
         run: mvn jacoco:report -pl order-service
@@ -56,6 +57,7 @@ jobs:
           files: ./order-service/target/site/jacoco/jacoco.xml
           flags: order-service
           name: order-service-coverage
+        continue-on-error: true
 
   build:
     name: Build Order Service
@@ -74,17 +76,15 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build common module
-        run: mvn clean install -pl common -am -DskipTests
-
       - name: Build service
-        run: mvn clean package -pl order-service -DskipTests
+        run: mvn clean package -pl order-service -am -DskipTests
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: order-service-jar
           path: order-service/target/*.jar
+          retention-days: 1
 
   docker:
     name: Build and Push Docker Image
@@ -96,11 +96,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Download artifact
-        uses: actions/download-artifact@v3
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
         with:
-          name: order-service-jar
-          path: order-service/target
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build JAR
+        run: mvn clean package -pl order-service -am -DskipTests
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -156,6 +160,14 @@ jobs:
             docker-compose up -d order-service
             docker-compose ps
 
+      - name: Wait for service to be ready
+        run: sleep 30
+
+      - name: Health check
+        run: |
+          curl -f ${{ secrets.STAGING_URL }}/order-service/actuator/health || exit 1
+        continue-on-error: true
+
   deploy-production:
     name: Deploy to Production
     needs: docker
@@ -181,10 +193,12 @@ jobs:
             docker-compose up -d order-service
             docker-compose ps
 
+      - name: Wait for service to be ready
+        run: sleep 30
+
       - name: Health check
         run: |
-          sleep 30
-          curl -f ${{ secrets.PRODUCTION_URL }}/actuator/health || exit 1
+          curl -f ${{ secrets.PRODUCTION_URL }}/order-service/actuator/health || exit 1
 
       - name: Notify deployment
         uses: 8398a7/action-slack@v3
@@ -193,3 +207,4 @@ jobs:
           text: 'Order Service deployed to production'
           webhook_url: ${{ secrets.SLACK_WEBHOOK }}
         if: always()
+        continue-on-error: true
