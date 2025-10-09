@@ -1,5 +1,10 @@
 package com.example.paymentservice;
 
+import com.example.paymentservice.model.Payment;
+import com.example.paymentservice.model.PaymentStatus;
+import com.example.paymentservice.repository.PaymentRepository;
+import com.example.paymentservice.service.PaymentService;
+import com.example.paymentservice.service.RetryPaymentScheduler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,6 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
