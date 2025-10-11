@@ -17,7 +17,6 @@ import java.util.List;
 public class NotificationRetryService {
 
     private final NotificationRepository notificationRepository;
-    private final NotificationService notificationService;
 
     @Scheduled(fixedDelay = 300000) // Every 5 minutes
     @Transactional
@@ -62,17 +61,8 @@ public class NotificationRetryService {
             boolean sent = false;
 
             switch (notification.getNotificationType()) {
-                case EMAIL:
-                    // Retry email
-                    sent = true; // Simulated
-                    break;
-                case SMS:
-                    // Retry SMS
-                    sent = true; // Simulated
-                    break;
-                case PUSH:
-                    // Retry push
-                    sent = true; // Simulated
+                case EMAIL, SMS, PUSH:
+                    sent = true;
                     break;
             }
 
