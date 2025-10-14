@@ -1,4 +1,4 @@
-package com.delivery.order.service;
+package com.example.orderservice.service;
 
 import com.delivery.order.dto.*;
 import com.delivery.order.model.Order;

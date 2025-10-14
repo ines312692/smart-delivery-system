@@ -1,4 +1,4 @@
-package com.delivery.order.controller;
+package com.example.orderservice.controller;
 
 import com.delivery.order.dto.OrderRequest;
 import com.delivery.order.dto.OrderResponse;

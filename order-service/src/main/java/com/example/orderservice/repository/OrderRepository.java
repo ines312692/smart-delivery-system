@@ -1,4 +1,4 @@
-package com.delivery.order.repository;
+package com.example.orderservice.repository;
 
 import com.delivery.order.model.Order;
 import com.delivery.order.model.OrderStatus;

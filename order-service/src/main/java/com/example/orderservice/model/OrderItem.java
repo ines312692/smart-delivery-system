@@ -1,4 +1,4 @@
-package com.delivery.order.model;
+package com.example.orderservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

@@ -1,4 +1,4 @@
-package com.delivery.order.exception;
+package com.example.orderservice.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

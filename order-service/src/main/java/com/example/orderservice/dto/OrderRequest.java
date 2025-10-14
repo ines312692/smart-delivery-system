@@ -1,4 +1,4 @@
-package com.delivery.order.dto;
+package com.example.orderservice.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
