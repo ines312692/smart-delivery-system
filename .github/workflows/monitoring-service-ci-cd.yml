@@ -1,0 +1,4 @@
+name: monitoring-service-ci-cd.yml
+on:
+
+jobs:
