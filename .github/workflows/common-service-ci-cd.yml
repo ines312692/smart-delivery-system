@@ -1,4 +1,76 @@
-name: common-service-ci-cd.yml
+name: Common Module CI
+
 on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'common/**'
+      - 'pom.xml'
+      - '.github/workflows/common-module-ci-cd.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'common/**'
+      - 'pom.xml'
+
+env:
+  JAVA_VERSION: '24'
+  MODULE_PATH: common
 
 jobs:
+  test:
+    name: Tests Common
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+
+      - name: Build + Tests
+        run: mvn -B -U -T 1C clean verify -pl ${{ env.MODULE_PATH }} -am
+
+      - name: Rapport JaCoCo
+        run: mvn -B jacoco:report -pl ${{ env.MODULE_PATH }}
+
+      - name: Upload coverage vers Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./${{ env.MODULE_PATH }}/target/site/jacoco/jacoco.xml
+          flags: common
+          name: common-coverage
+        continue-on-error: true
+
+  publish:
+    name: Publish (GitHub Packages)
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }} + server Maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+          server-id: github
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
+
+      - name: Déployer SNAPSHOT/Release vers GitHub Packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mvn -B -DskipTests -pl ${{ env.MODULE_PATH }} -am \
+            deploy -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/${{ github.repository }}

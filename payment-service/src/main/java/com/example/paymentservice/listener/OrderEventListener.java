@@ -31,7 +31,7 @@ public class OrderEventListener {
 
         } catch (Exception e) {
             log.error("Error processing order event: {}", event.getOrderNumber(), e);
-            // Don't acknowledge - message will be redelivered
+
         }
     }
 }

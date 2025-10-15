@@ -1,4 +1,32 @@
-name: monitoring-service-ci-cd.yml
+name: Monitoring Service CI/CD
+
 on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'monitoring-service/**'
+      - 'common/**'
+      - 'pom.xml'
+      - '.github/workflows/service-ci-cd-reusable.yml'
+      - '.github/workflows/monitoring-service-ci-cd.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'monitoring-service/**'
+      - 'common/**'
+      - 'pom.xml'
 
 jobs:
+  pipeline:
+    uses: ./.github/workflows/service-ci-cd-reusable.yml
+    with:
+      service_name: monitoring-service
+      module_path: monitoring-service
+      docker_image: ${{ secrets.DOCKER_USERNAME }}/smart-delivery-monitoring-service
+      health_path: /actuator/health
+      java_version: '24'
+      enable_codecov: true
+      enable_sbom: true
+      enable_trivy: true
+      enable_sign: false
+    secrets: inherit

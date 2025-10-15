@@ -1,4 +1,32 @@
-name: payment-service-ci-cd.yml
+name: Payment Service CI/CD
+
 on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'payment-service/**'
+      - 'common/**'
+      - 'pom.xml'
+      - '.github/workflows/service-ci-cd-reusable.yml'
+      - '.github/workflows/payment-service-ci-cd.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'payment-service/**'
+      - 'common/**'
+      - 'pom.xml'
 
 jobs:
+  pipeline:
+    uses: ./.github/workflows/service-ci-cd-reusable.yml
+    with:
+      service_name: payment-service
+      module_path: payment-service
+      docker_image: ${{ secrets.DOCKER_USERNAME }}/smart-delivery-payment-service
+      health_path: /actuator/health
+      java_version: '24'
+      enable_codecov: true
+      enable_sbom: true
+      enable_trivy: true
+      enable_sign: true
+    secrets: inherit

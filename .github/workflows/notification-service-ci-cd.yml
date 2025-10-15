@@ -1,4 +1,32 @@
-name: notification-service-ci-cd.yml
+name: Notification Service CI/CD
+
 on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'notification-service/**'
+      - 'common/**'
+      - 'pom.xml'
+      - '.github/workflows/service-ci-cd-reusable.yml'
+      - '.github/workflows/notification-service-ci-cd.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'notification-service/**'
+      - 'common/**'
+      - 'pom.xml'
 
 jobs:
+  pipeline:
+    uses: ./.github/workflows/service-ci-cd-reusable.yml
+    with:
+      service_name: notification-service
+      module_path: notification-service
+      docker_image: ${{ secrets.DOCKER_USERNAME }}/smart-delivery-notification-service
+      health_path: /actuator/health
+      java_version: '24'
+      enable_codecov: true
+      enable_sbom: true
+      enable_trivy: true
+      enable_sign: false
+    secrets: inherit
