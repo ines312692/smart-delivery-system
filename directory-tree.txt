@@ -1,4 +1,136 @@
 smart-delivery-system/
+├── common/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/
+│   │   │   │   ├── com/
+│   │   │   │       ├── example/
+│   │   │   │           ├── common/
+│   │   │   │               ├── constants/
+│   │   │   │               │   ├── EventTypes.java
+│   │   │   │               │   ├── KafkaTopics.java
+│   │   │   │               │   └── StatusConstants.java
+│   │   │   │               ├── dto/
+│   │   │   │               │   ├── ApiResponse.java
+│   │   │   │               │   ├── BaseEvent.java
+│   │   │   │               │   ├── DeliveryEvent.java
+│   │   │   │               │   ├── ErrorDetails.java
+│   │   │   │               │   ├── LocationDTO.java
+│   │   │   │               │   ├── NotificationEvent.java
+│   │   │   │               │   ├── OrderEvent.java
+│   │   │   │               │   ├── OrderItemDTO.java
+│   │   │   │               │   ├── PageResponse.java
+│   │   │   │               │   └── PaymentEvent.java
+│   │   │   │               ├── util/
+│   │   │   │               │   ├── DateUtil.java
+│   │   │   │               │   ├── JsonUtil.java
+│   │   │   │               │   ├── StringUtil.java
+│   │   │   │               │   └── ValidationUtil.java
+│   │   │   │               └── CommonApplication.java
+│   │   │   ├── resources/
+│   │   │       ├── static/
+│   │   │       ├── templates/
+│   │   │       └── application.properties
+│   │   ├── test/
+│   │       ├── java/
+│   │           ├── com/
+│   │               ├── example/
+│   │                   ├── common/
+│   │                       └── CommonApplicationTests.java
+│   ├── HELP.md
+│   ├── mvnw
+│   ├── mvnw.cmd
+│   └── pom.xml
+├── docs/
+│   └── HELP.md
+├── monitoring-service/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/
+│   │   │   │   ├── com/
+│   │   │   │       ├── example/
+│   │   │   │           ├── monitoringservice/
+│   │   │   │               ├── config/
+│   │   │   │               │   ├── CorsConfig.java
+│   │   │   │               │   ├── KafkaConsumerConfig.java
+│   │   │   │               │   └── WebSocketConfig.java
+│   │   │   │               ├── controller/
+│   │   │   │               │   └── DashboardController.java
+│   │   │   │               ├── entity/
+│   │   │   │               │   ├── EventLog.java
+│   │   │   │               │   ├── ServiceHealth.java
+│   │   │   │               │   └── SystemMetrics.java
+│   │   │   │               ├── listner/
+│   │   │   │               │   └── AllEventsListener.java
+│   │   │   │               ├── repository/
+│   │   │   │               │   ├── EventLogRepository.java
+│   │   │   │               │   ├── ServiceHealthRepository.java
+│   │   │   │               │   └── SystemMetricsRepository.java
+│   │   │   │               ├── serive/
+│   │   │   │               │   ├── HealthCheckService.java
+│   │   │   │               │   ├── MetricsCollectorService.java
+│   │   │   │               │   ├── MonitoringService.java
+│   │   │   │               │   └── WebSocketService.java
+│   │   │   │               └── MonitoringServiceApplication.java
+│   │   │   ├── resources/
+│   │   │       ├── static/
+│   │   │       ├── templates/
+│   │   │       └── application.properties
+│   │   ├── test/
+│   │       ├── java/
+│   │           ├── com/
+│   │               ├── example/
+│   │                   ├── monitoringservice/
+│   │                       └── MonitoringServiceApplicationTests.java
+│   ├── HELP.md
+│   ├── mvnw
+│   ├── mvnw.cmd
+│   └── pom.xml
+├── notification-service/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/
+│   │   │   │   ├── com/
+│   │   │   │       ├── example/
+│   │   │   │           ├── notificationservice/
+│   │   │   │               ├── config/
+│   │   │   │               │   ├── AsyncConfig.java
+│   │   │   │               │   ├── EmailConfig.java
+│   │   │   │               │   └── KafkaConsumerConfig.java
+│   │   │   │               ├── dto/
+│   │   │   │               │   ├── DeliveryEvent.java
+│   │   │   │               │   ├── OrderEvent.java
+│   │   │   │               │   └── PaymentEvent.java
+│   │   │   │               ├── listener/
+│   │   │   │               │   ├── DeliveryEventListener.java
+│   │   │   │               │   ├── OrderEventListener.java
+│   │   │   │               │   └── PaymentEventListener.java
+│   │   │   │               ├── model/
+│   │   │   │               │   ├── Notification.java
+│   │   │   │               │   └── NotificationType.java
+│   │   │   │               ├── repository/
+│   │   │   │               │   └── NotificationRepository.java
+│   │   │   │               ├── service/
+│   │   │   │               │   ├── EmailNotificationService.java
+│   │   │   │               │   ├── NotificationRetryService.java
+│   │   │   │               │   ├── NotificationService.java
+│   │   │   │               │   ├── PushNotificationService.java
+│   │   │   │               │   └── SmsNotificationService.java
+│   │   │   │               └── NotificationServiceApplication.java
+│   │   │   ├── resources/
+│   │   │       ├── static/
+│   │   │       ├── templates/
+│   │   │       └── application.properties
+│   │   ├── test/
+│   │       ├── java/
+│   │           ├── com/
+│   │               ├── example/
+│   │                   ├── notificationservice/
+│   │                       └── NotificationServiceApplicationTests.java
+│   ├── HELP.md
+│   ├── mvnw
+│   ├── mvnw.cmd
+│   └── pom.xml
 ├── order-service/
 │   ├── src/
 │   │   ├── main/
@@ -45,8 +177,99 @@ smart-delivery-system/
 │   ├── HELP.md
 │   ├── mvnw
 │   ├── mvnw.cmd
-│   ├── order-service.iml
+│   └── pom.xml
+├── payment-service/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/
+│   │   │   │   ├── com/
+│   │   │   │       ├── example/
+│   │   │   │           ├── paymentservice/
+│   │   │   │               ├── config/
+│   │   │   │               │   ├── KafkaConsumerConfig.java
+│   │   │   │               │   ├── KafkaProducerConfig.java
+│   │   │   │               │   ├── SchedulerConfig.java
+│   │   │   │               │   └── ThreadPoolConfig.java
+│   │   │   │               ├── dto/
+│   │   │   │               │   ├── OrderEvent.java
+│   │   │   │               │   ├── PaymentEvent.java
+│   │   │   │               │   └── PaymentRequest.java
+│   │   │   │               ├── listener/
+│   │   │   │               │   └── OrderEventListener.java
+│   │   │   │               ├── model/
+│   │   │   │               │   ├── Payment.java
+│   │   │   │               │   ├── PaymentMethod.java
+│   │   │   │               │   └── PaymentStatus.java
+│   │   │   │               ├── repository/
+│   │   │   │               │   └── PaymentRepository.java
+│   │   │   │               ├── service/
+│   │   │   │               │   ├── KafkaProducerService.java
+│   │   │   │               │   ├── PaymentProcessorService.java
+│   │   │   │               │   ├── PaymentService.java
+│   │   │   │               │   └── RetryPaymentScheduler.java
+│   │   │   │               └── PaymentServiceApplication.java
+│   │   │   ├── resources/
+│   │   │       ├── static/
+│   │   │       ├── templates/
+│   │   │       ├── application-docker.yml
+│   │   │       ├── application.properties
+│   │   │       └── application.yml
+│   │   ├── test/
+│   │       ├── java/
+│   │           ├── com/
+│   │               ├── example/
+│   │                   ├── paymentservice/
+│   │                       ├── KafkaProducerServiceTest.java
+│   │                       ├── OrderEventListenerTest.java
+│   │                       ├── PaymentIntegrationTest.java
+│   │                       ├── PaymentProcessorServiceTest.java
+│   │                       ├── PaymentRepositoryTest.java
+│   │                       ├── PaymentServiceApplicationTests.java
+│   │                       ├── PaymentServiceTest.java
+│   │                       └── RetryPaymentSchedulerTest.java
+│   ├── target/
+│   │   ├── classes/
+│   │   │   ├── com/
+│   │   │   │   ├── example/
+│   │   │   │       ├── paymentservice/
+│   │   │   │           ├── config/
+│   │   │   │           │   ├── KafkaConsumerConfig.class
+│   │   │   │           │   ├── KafkaProducerConfig.class
+│   │   │   │           │   ├── SchedulerConfig.class
+│   │   │   │           │   └── ThreadPoolConfig.class
+│   │   │   │           ├── dto/
+│   │   │   │           │   ├── OrderEvent$OrderEventBuilder.class
+│   │   │   │           │   ├── OrderEvent.class
+│   │   │   │           │   ├── PaymentEvent$PaymentEventBuilder.class
+│   │   │   │           │   ├── PaymentEvent.class
+│   │   │   │           │   ├── PaymentRequest$PaymentRequestBuilder.class
+│   │   │   │           │   └── PaymentRequest.class
+│   │   │   │           ├── listener/
+│   │   │   │           │   └── OrderEventListener.class
+│   │   │   │           ├── model/
+│   │   │   │           │   ├── Payment.class
+│   │   │   │           │   ├── PaymentMethod.class
+│   │   │   │           │   └── PaymentStatus.class
+│   │   │   │           ├── repository/
+│   │   │   │           │   └── PaymentRepository.class
+│   │   │   │           ├── service/
+│   │   │   │           │   ├── KafkaProducerService.class
+│   │   │   │           │   ├── PaymentProcessorService.class
+│   │   │   │           │   ├── PaymentService.class
+│   │   │   │           │   └── RetryPaymentScheduler.class
+│   │   │   │           └── PaymentServiceApplication.class
+│   │   │   ├── application-docker.yml
+│   │   │   ├── application.properties
+│   │   │   └── application.yml
+│   │   ├── generated-sources/
+│   │       ├── annotations/
+│   ├── Dockerfile
+│   ├── HELP.md
+│   ├── REDAME.md
+│   ├── mvnw
+│   ├── mvnw.cmd
 │   └── pom.xml
 ├── README.md
+├── directory-tree.txt
 ├── pom.xml
 └── smart-delivery-system.iml
