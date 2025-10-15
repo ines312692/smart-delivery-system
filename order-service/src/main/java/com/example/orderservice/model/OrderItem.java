@@ -37,7 +37,8 @@ public class OrderItem {
     private BigDecimal unitPrice;
 
     @Column(nullable = false)
-    private BigDecimal totalPrice;
+    private BigDecimal totalPrice = BigDecimal.ZERO;
+
 
     @PrePersist
     @PreUpdate

@@ -1,11 +1,10 @@
 package com.example.paymentservice.service;
 
-
 import com.example.paymentservice.dto.PaymentEvent;
 import com.example.paymentservice.model.Payment;
 import com.example.paymentservice.model.PaymentStatus;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class PaymentProcessorService {
 
@@ -24,13 +22,18 @@ public class PaymentProcessorService {
     private final KafkaProducerService kafkaProducerService;
     private final Random random = new Random();
 
+    public PaymentProcessorService(@Lazy PaymentService paymentService,
+                                   KafkaProducerService kafkaProducerService) {
+        this.paymentService = paymentService;
+        this.kafkaProducerService = kafkaProducerService;
+    }
+
     @Async("paymentProcessorExecutor")
     public CompletableFuture<Void> processPaymentAsync(Payment payment) {
         return CompletableFuture.runAsync(() -> {
             try {
                 log.info("Processing payment: {}", payment.getPaymentNumber());
 
-                // Update to processing
                 paymentService.updatePaymentStatus(
                         payment.getId(),
                         PaymentStatus.PROCESSING,
@@ -38,10 +41,8 @@ public class PaymentProcessorService {
                         "Payment processing started"
                 );
 
-                // Simulate payment gateway processing time
                 TimeUnit.SECONDS.sleep(2);
 
-                // Simulate payment gateway response (80% success rate)
                 boolean success = random.nextInt(100) < 80;
 
                 if (success) {
@@ -71,7 +72,6 @@ public class PaymentProcessorService {
                 "Payment completed successfully"
         );
 
-        // Publish payment completed event
         PaymentEvent event = PaymentEvent.builder()
                 .eventId(UUID.randomUUID().toString())
                 .eventType("PAYMENT_COMPLETED")
@@ -100,7 +100,6 @@ public class PaymentProcessorService {
                 failureReason
         );
 
-        // Publish payment failed event
         PaymentEvent event = PaymentEvent.builder()
                 .eventId(UUID.randomUUID().toString())
                 .eventType("PAYMENT_FAILED")

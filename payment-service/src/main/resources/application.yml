@@ -1,30 +1,28 @@
-# ============================================
-# application.yml (Payment Service)
-# ============================================
 spring:
   application:
     name: payment-service
-
+  
+  # Base de données H2 en mémoire
   datasource:
-    url: jdbc:postgresql://localhost:5432/delivery_db
-    username: delivery_user
-    password: delivery_pass
-    driver-class-name: org.postgresql.Driver
-    hikari:
-      maximum-pool-size: 10
-      minimum-idle: 5
-      connection-timeout: 20000
-
+    url: jdbc:h2:mem:paymentdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-        use_sql_comments: true
+        dialect: org.hibernate.dialect.H2Dialect
 
+  # Configuration Kafka CONSUMER
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
@@ -33,37 +31,26 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        spring.json.trusted.packages: "*"
+        spring:
+          json:
+            trusted:
+              packages: "com.example.paymentservice.dto,com.example.orderservice.dto"
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      acks: all
-      retries: 3
-    properties:
-      spring.json.add.type.headers: false
 
+# Port du service
 server:
   port: 8082
-  servlet:
-    context-path: /
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,prometheus
-  endpoint:
-    health:
-      show-details: always
-  metrics:
-    export:
-      prometheus:
-        enabled: true
+# Topics Kafka
+kafka:
+  topic:
+    orders: orders-topic
+    payments: payments-topic
 
+# Logs pour debug
 logging:
   level:
-    com.delivery.payment: DEBUG
+    com.example.paymentservice: DEBUG
     org.springframework.kafka: INFO
-    org.hibernate.SQL: DEBUG
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"

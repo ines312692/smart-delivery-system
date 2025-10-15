@@ -1,11 +1,10 @@
 package com.example.orderservice.service;
 
-import com.delivery.order.dto.*;
-import com.delivery.order.model.Order;
-import com.delivery.order.model.OrderItem;
-import com.delivery.order.model.OrderStatus;
-import com.delivery.order.repository.OrderRepository;
-import com.delivery.order.exception.OrderNotFoundException;
+import com.example.orderservice.dto.*;
+import com.example.orderservice.model.OrderItem;
+import com.example.orderservice.model.OrderStatus;
+import com.example.orderservice.repository.OrderRepository;
+import com.example.orderservice.exception.OrderNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -32,7 +31,7 @@ public class OrderService {
         log.info("Creating order asynchronously for customer: {}", request.getCustomerId());
 
         // Create order entity
-        Order order = new Order();
+        com.example.orderservice.model.Order order = new com.example.orderservice.model.Order();
         order.setOrderNumber(generateOrderNumber());
         order.setCustomerId(request.getCustomerId());
         order.setCustomerName(request.getCustomerName());
@@ -55,7 +54,7 @@ public class OrderService {
         order.calculateTotalAmount();
 
         // Save order
-        Order savedOrder = orderRepository.save(order);
+        com.example.orderservice.model.Order savedOrder = orderRepository.save(order);
         log.info("Order created successfully: {}", savedOrder.getOrderNumber());
 
         // Publish event to Kafka
@@ -67,14 +66,14 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public OrderResponse getOrderById(Long id) {
-        Order order = orderRepository.findById(id)
+        com.example.orderservice.model.Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + id));
         return mapToResponse(order);
     }
 
     @Transactional(readOnly = true)
     public OrderResponse getOrderByNumber(String orderNumber) {
-        Order order = orderRepository.findByOrderNumber(orderNumber)
+        com.example.orderservice.model.Order order = orderRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with number: " + orderNumber));
         return mapToResponse(order);
     }
@@ -88,7 +87,7 @@ public class OrderService {
 
     @Transactional
     public void updateOrderStatus(Long orderId, OrderStatus status) {
-        Order order = orderRepository.findById(orderId)
+        com.example.orderservice.model.Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + orderId));
 
         order.setStatus(status);
@@ -105,7 +104,7 @@ public class OrderService {
         return "ORD-" + System.currentTimeMillis() + "-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 
-    private OrderEvent buildOrderEvent(Order order) {
+    private OrderEvent buildOrderEvent(com.example.orderservice.model.Order order) {
         return OrderEvent.builder()
                 .eventId(UUID.randomUUID().toString())
                 .eventType("ORDER_CREATED")
@@ -125,7 +124,7 @@ public class OrderService {
                 .build();
     }
 
-    private OrderResponse mapToResponse(Order order) {
+    private OrderResponse mapToResponse(com.example.orderservice.model.Order order) {
         return OrderResponse.builder()
                 .id(order.getId())
                 .orderNumber(order.getOrderNumber())
@@ -150,32 +149,5 @@ public class OrderService {
                 .unitPrice(item.getUnitPrice())
                 .totalPrice(item.getTotalPrice())
                 .build();
-    }
-}
-
-// ============================================
-// 14. KafkaProducerService.java
-// ============================================
-package com.delivery.order.service;
-
-import com.delivery.order.dto.OrderEvent;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Service;
-
-@Service
-@RequiredArgsConstructor
-@Slf4j
-public class KafkaProducerService {
-
-    private static final String ORDER_CREATED_TOPIC = "order.created";
-
-    private final KafkaTemplate<String, Object> kafkaTemplate;
-
-    public void sendOrderCreatedEvent(OrderEvent event) {
-        log.info("Publishing order created event to Kafka: {}", event.getOrderNumber());
-        kafkaTemplate.send(ORDER_CREATED_TOPIC, event.getOrderNumber(), event);
-        log.info("Order created event published successfully");
     }
 }

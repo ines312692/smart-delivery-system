@@ -43,7 +43,7 @@ public class Order {
     private List<OrderItem> items = new ArrayList<>();
 
     @Column(nullable = false)
-    private BigDecimal totalAmount;
+    private BigDecimal totalAmount = BigDecimal.ZERO;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -60,11 +60,18 @@ public class Order {
     public void addItem(OrderItem item) {
         items.add(item);
         item.setOrder(this);
+
+        if (item.getUnitPrice() != null && item.getQuantity() != null) {
+            BigDecimal itemTotal = item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
+            item.setTotalPrice(itemTotal);
+        } else {
+            item.setTotalPrice(BigDecimal.ZERO);
+        }
     }
 
     public void calculateTotalAmount() {
         this.totalAmount = items.stream()
-                .map(OrderItem::getTotalPrice)
+                .map(item -> item.getTotalPrice() != null ? item.getTotalPrice() : BigDecimal.ZERO)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

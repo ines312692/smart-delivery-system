@@ -1,8 +1,8 @@
 package com.example.orderservice.controller;
 
-import com.delivery.order.dto.OrderRequest;
-import com.delivery.order.dto.OrderResponse;
-import com.delivery.order.service.OrderService;
+import com.example.orderservice.dto.OrderRequest;
+import com.example.orderservice.dto.OrderResponse;
+import com.example.orderservice.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
