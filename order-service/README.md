@@ -99,10 +99,10 @@ Base path: `/api/orders`
 ## Data Model
 - `Order`: id, orderNumber, customerId, customerName, customerEmail, customerPhone, deliveryAddress, totalAmount, status, createdAt, completedAt, items
 - `OrderItem`: id, productId, productName, quantity, unitPrice, totalPrice
-- `OrderStatus`: enum with values like CREATED, PROCESSING, SHIPPED, DELIVERED, CANCELLED (check code for exact list)
+- `OrderStatus`: enum with values like CREATED, PROCESSING, SHIPPED, DELIVERED, CANCELLED (check code for an exact list)
 
 ## Build
-From repository root:
+From the repository root:
 - `mvn -q -DskipTests package`
 
 From this module only:
