@@ -1,0 +1,37 @@
+graph TD
+    A[Début: Client passe une commande] --> B[Valider les informations de commande]
+    B --> C{Commande valide?}
+    C -->|Non| D[Retourner erreur]
+    D --> E[Fin: Erreur de validation]
+    C -->|Oui| F[Créer la commande]
+    F --> G[Publier OrderEvent sur Kafka]
+    G --> H[Recevoir OrderEvent - Payment Service]
+    H --> I[Initier le paiement]
+    I --> J{Paiement réussi?}
+    J -->|Non| K[Retourner erreur paiement]
+    K --> L[Notifier le client]
+    L --> M[Fin: Paiement échoué]
+    J -->|Oui| N[Publier PaymentEvent]
+    N --> O[Notifier client: Paiement confirmé]
+    N --> P[Recevoir OrderEvent - Delivery Service]
+    P --> Q[Créer délivery record]
+    Q --> R[Assigner un driver]
+    R --> S[Publier DeliveryEvent]
+    S --> T[Notifier client: Livraison en cours]
+    T --> U{Livraison assignée?}
+    U -->|Non| V[Réessayer l'assignation]
+    V --> U
+    U -->|Oui| W[Démarrer suivi en temps réel]
+    W --> X[Mettre à jour localisation]
+    X --> Y{Destination atteinte?}
+    Y -->|Non| X
+    Y -->|Oui| Z[Marquer comme livré]
+    Z --> AA[Publier DeliveryCompletedEvent]
+    AA --> AB[Notifier client: Livraison complétée]
+    AB --> AC[Enregistrer les métriques]
+    AC --> AD[Fin: Livraison réussie]
+    
+    style A fill:#90EE90
+    style E fill:#FFB6C6
+    style M fill:#FFB6C6
+    style AD fill:#90EE90

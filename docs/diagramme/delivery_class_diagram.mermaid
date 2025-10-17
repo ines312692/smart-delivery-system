@@ -1,0 +1,125 @@
+classDiagram
+    class Order {
+        -orderId: String
+        -customerId: String
+        -status: OrderStatus
+        -items: List~OrderItem~
+        -totalAmount: BigDecimal
+        -createdAt: LocalDateTime
+        +createOrder()
+        +updateStatus()
+        +getItems()
+    }
+
+    class OrderItem {
+        -itemId: String
+        -productId: String
+        -quantity: Integer
+        -price: BigDecimal
+        -description: String
+    }
+
+    class Payment {
+        -paymentId: String
+        -orderId: String
+        -amount: BigDecimal
+        -status: PaymentStatus
+        -method: PaymentMethod
+        -processedAt: LocalDateTime
+        +processPayment()
+        +refund()
+        +getStatus()
+    }
+
+    class PaymentMethod {
+        CREDIT_CARD
+        DEBIT_CARD
+        PAYPAL
+        BANK_TRANSFER
+    }
+
+    class PaymentStatus {
+        PENDING
+        PROCESSING
+        COMPLETED
+        FAILED
+        REFUNDED
+    }
+
+    class Delivery {
+        -deliveryId: String
+        -orderId: String
+        -status: DeliveryStatus
+        -currentLocation: Location
+        -destination: Location
+        -estimatedTime: LocalDateTime
+        -driver: Driver
+        +updateLocation()
+        +updateStatus()
+        +getETA()
+    }
+
+    class Location {
+        -latitude: Double
+        -longitude: Double
+        -address: String
+        -city: String
+        +calculateDistance()
+    }
+
+    class Notification {
+        -notificationId: String
+        -userId: String
+        -type: NotificationType
+        -message: String
+        -sentAt: LocalDateTime
+        -read: Boolean
+        +markAsRead()
+        +send()
+    }
+
+    class NotificationType {
+        ORDER_CONFIRMED
+        PAYMENT_SUCCESS
+        DELIVERY_STARTED
+        DELIVERY_COMPLETED
+        DELIVERY_DELAYED
+    }
+
+    class EventLog {
+        -logId: String
+        -eventType: String
+        -eventData: String
+        -timestamp: LocalDateTime
+        +logEvent()
+    }
+
+    class SystemMetrics {
+        -metricsId: String
+        -serviceName: String
+        -cpuUsage: Double
+        -memoryUsage: Double
+        -requestCount: Long
+        -errorCount: Long
+        +recordMetrics()
+    }
+
+    class ServiceHealth {
+        -healthId: String
+        -serviceName: String
+        -status: String
+        -lastCheckTime: LocalDateTime
+        +checkHealth()
+    }
+
+    Order "1" -- "*" OrderItem : contains
+    Order "1" -- "1" Payment : initiates
+    Order "1" -- "1" Delivery : triggers
+    Payment "1" -- "1" PaymentStatus : has
+    Payment "1" -- "1" PaymentMethod : uses
+    Delivery "1" -- "1" Location : has_current
+    Delivery "1" -- "1" Location : has_destination
+    Notification "1" -- "1" NotificationType : is
+    EventLog "1" -- "0..*" Order : logs
+    EventLog "1" -- "0..*" Payment : logs
+    EventLog "1" -- "0..*" Delivery : logs

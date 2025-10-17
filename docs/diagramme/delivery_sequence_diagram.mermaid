@@ -1,0 +1,56 @@
+sequenceDiagram
+    participant Client
+    participant OrderService as Order Service
+    participant PaymentService as Payment Service
+    participant DeliveryService as Delivery Service
+    participant NotificationService as Notification Service
+    participant Kafka as Message Broker
+    participant MonitoringService as Monitoring Service
+
+    Client->>OrderService: 1. Créer une commande
+    activate OrderService
+    OrderService->>OrderService: Valider la commande
+    OrderService->>Kafka: Publier OrderEvent
+    OrderService-->>Client: Commande créée (ID)
+    deactivate OrderService
+
+    Kafka->>PaymentService: 2. Recevoir OrderEvent
+    activate PaymentService
+    PaymentService->>PaymentService: Traiter le paiement
+    PaymentService->>Kafka: Publier PaymentEvent
+    deactivate PaymentService
+
+    Kafka->>NotificationService: 3a. Recevoir PaymentEvent
+    activate NotificationService
+    NotificationService->>NotificationService: Préparer notification
+    NotificationService->>Client: Envoyer confirmation paiement
+    deactivate NotificationService
+
+    Kafka->>DeliveryService: 3b. Recevoir OrderEvent
+    activate DeliveryService
+    DeliveryService->>DeliveryService: Créer livraison
+    DeliveryService->>DeliveryService: Assigner un driver
+    DeliveryService->>Kafka: Publier DeliveryEvent
+    deactivate DeliveryService
+
+    Kafka->>NotificationService: 4. Recevoir DeliveryEvent
+    activate NotificationService
+    NotificationService->>Client: Notifier début livraison
+    deactivate NotificationService
+
+    DeliveryService->>DeliveryService: 5. Mettre à jour localisation
+    DeliveryService->>Kafka: Publier LocationEvent
+    
+    Kafka->>MonitoringService: 6. Recevoir tous les événements
+    activate MonitoringService
+    MonitoringService->>MonitoringService: Logger et métriser
+    MonitoringService->>MonitoringService: Vérifier santé services
+    deactivate MonitoringService
+
+    DeliveryService->>DeliveryService: 7. Livraison complétée
+    DeliveryService->>Kafka: Publier DeliveryCompletedEvent
+
+    Kafka->>NotificationService: 8. Recevoir DeliveryCompletedEvent
+    activate NotificationService
+    NotificationService->>Client: Envoyer confirmation livraison
+    deactivate NotificationService
